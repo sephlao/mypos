@@ -5,24 +5,24 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: 'tabs',
+    path: 'pos',
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
+        path: 'calc',
         children: [
           {
             path: '',
-            loadChildren: '../tab1/tab1.module#Tab1PageModule'
+            loadChildren: '../calc/calc.module#CalcPageModule'
           }
         ]
       },
       {
-        path: 'tab2',
+        path: 'sales',
         children: [
           {
             path: '',
-            loadChildren: '../tab2/tab2.module#Tab2PageModule'
+            loadChildren: '../sales/sales.module#SalesPageModule'
           }
         ]
       },
@@ -37,14 +37,14 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/pos/calc',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/pos/calc',
     pathMatch: 'full'
   }
 ];

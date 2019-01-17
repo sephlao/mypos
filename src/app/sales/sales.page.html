@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Sales
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label>Date</ion-label>
+          <ion-datetime display-format="YYYY/MM/DD" [(ngModel)]="date">
+          </ion-datetime>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ngx-datatable
+          class='expandable sales'
+          [columnMode]="'force'"
+          [rows]="rows"
+          [columns]="columns">
+        </ngx-datatable>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+    <ion-list lines="none">
+      <ion-list-header>
+        <ion-label>Total Gross Income:</ion-label>
+      </ion-list-header>
+      <ion-item >
+        <ion-icon name="wallet"></ion-icon>
+        <ion-label class="gross">₱ 132.00</ion-label>
+      </ion-item>
+    </ion-list>
+</ion-content>

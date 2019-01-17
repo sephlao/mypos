@@ -1,0 +1,28 @@
+.welcome-card ion-img {
+  max-height: 35vh;
+  overflow: hidden;
+}
+
+.calculator-tab ion-grid {
+  .text-center {
+    text-align: left;
+    font-size: 12px;
+    padding: 5px 15px;
+  }
+  ion-label.fixed-label {
+    flex: 0 0 150px;
+    width: 150px;
+  }
+}
+
+ion-list {
+  ion-button.btn-sold {
+    margin: 0 auto;
+    width: 100px;
+    height: 50px;
+    font-size: 16px;
+  }
+  ion-label.due {
+    font-size: 24px;
+  }
+}
