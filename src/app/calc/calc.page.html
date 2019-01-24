@@ -7,49 +7,50 @@
 </ion-header>
 
 <ion-content class="calculator-tab">
-    
-      <ion-grid>
-        <ion-row *ngFor="let item of products">
-          <ion-col *ngIf="item.show || item.main">
-            <ion-item size="auto">
-              <ion-label class="fixed-label" position="fixed">{{item.product}}:</ion-label>
-              <ion-input type="number" min="0" placeholder="Quantity" [ngModel]="item.quan" (ngModelChange)="item.quan = $event;calculateTotal()"></ion-input>
-            </ion-item>
-            <div class="text-center">({{item.quan || 0}} X {{item.price}} = {{item.quan*item.price || 0}})</div>
-          </ion-col>
-          <ion-col size="2" *ngIf="!item.main && item.show">
-              <ion-list lines="none">
-                <ion-item>
-                  <ion-icon name="remove-circle-outline" (click)="removeItem(item)"></ion-icon>
-                </ion-item>
-              </ion-list>
-          </ion-col>
-        </ion-row>
 
-        <ion-row>
-          <ion-col>
-            <ion-item>
-              <ion-label>Add Product </ion-label>
-              <ion-select [ngModel]="selectedSubProducts" (ngModelChange)="selectSubProduct($event)" ok-text="Okay" multiple cancel-text="Cancel">
-                <div *ngFor="let item of subProductsList">
-                    <ion-select-option *ngIf="!item.show" value="{{item.product}}">{{item.product}}</ion-select-option>
-                </div>
-              </ion-select>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-      
-    <ion-list lines="none">
-      <ion-list-header>
-        <ion-label>Total Payable:</ion-label>
-      </ion-list-header>
-      <ion-item >
-        <ion-icon name="wallet"></ion-icon>
-        <ion-label class="due">₱ {{total}}</ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-button class="btn-sold" (click)="clearAll()" *ngIf="total != 0">Clear</ion-button>
-      </ion-item>
-    </ion-list>
+  <ion-grid>
+    <ion-row *ngFor="let item of products">
+      <ion-col *ngIf="item.show || item.main">
+        <ion-item size="auto">
+          <ion-label class="fixed-label" position="fixed">{{item.product}}:</ion-label>
+          <ion-input type="number" min="0" placeholder="Quantity" [ngModel]="item.quan" (ngModelChange)="item.quan = $event;calculateTotal()"></ion-input>
+        </ion-item>
+        <div class="text-center">({{item.quan || 0}} X {{item.price}} = {{item.quan*item.price || 0}})</div>
+      </ion-col>
+      <ion-col size="2" *ngIf="!item.main && item.show">
+        <ion-list lines="none">
+          <ion-item>
+            <ion-icon name="remove-circle-outline" (click)="removeItem(item)"></ion-icon>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label>Add Product </ion-label>
+          <ion-select [ngModel]="selectedSubProducts" (ngModelChange)="selectSubProduct($event)" ok-text="Okay"
+            multiple cancel-text="Cancel">
+            <div *ngFor="let item of subProductsList">
+              <ion-select-option *ngIf="!item.show" value="{{item.product}}">{{item.product}}</ion-select-option>
+            </div>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-list lines="none">
+    <ion-list-header>
+      <ion-label>Total Payable:</ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-icon name="wallet"></ion-icon>
+      <ion-label class="due">₱ {{total}}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-button class="btn-sold" (click)="sold()" *ngIf="total != 0" [disabled]="saving">{{saving ? 'Saving sales record...' : 'Sold'}}</ion-button>
+    </ion-item>
+  </ion-list>
 </ion-content>

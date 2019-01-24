@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CalcService } from './calc.service';
 import { Observable } from 'rxjs';
 import { Product } from '../common/product';
-import { async } from 'q';
 
 @Component({
   selector: 'app-calc',
@@ -16,7 +15,7 @@ export class CalcPage implements OnInit {
   selectedSubProducts: any[];
   total: number = 0;
   productCollection: Observable<Product[]>;
-
+  saving: boolean;
   constructor(private _calcService: CalcService) {
     this.productCollection = this._calcService.getAllProducts()
   }
@@ -25,7 +24,7 @@ export class CalcPage implements OnInit {
 
   ngOnInit() {
     this.productCollection.subscribe((productsData: Product[]) => {
-      this.products = productsData;
+      this.products = [...productsData];
       this.getSubProductList(productsData).then(list => {
         this.subProductsList = list;
       });
@@ -74,8 +73,9 @@ export class CalcPage implements OnInit {
     this.total = payable;
   }
 
-  clearAll() {
-    let products = [...this.products];
+  sold() {
+    this.saving = true;
+    const products = [...this.products];
     products.forEach(item => {  
       if (item.quan > 0) {
         item.total = item.quan * item.price;
@@ -86,8 +86,15 @@ export class CalcPage implements OnInit {
       products: products.filter(x => x.quan > 0),
       total: this.total
     };
-    this._calcService.updateSalesRecord(data);
-   
+    
+    this._calcService.updateSalesRecord(data)
+    .subscribe(ret => {
+      this.saving = !ret;
+      this.total = 0;
+      this.products.forEach(q => q.quan = null);
+    })
+    
+
   }
 
   getCurrentDate() {

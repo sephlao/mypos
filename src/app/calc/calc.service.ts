@@ -25,61 +25,82 @@ export class CalcService {
     return Observable.create(observer => {
       this.salesCollection.ref.where('id', '==', date).get().then(a => {
         const doc = a.docs
-        doc.forEach(d => {
-          if (d.exists) {
-            observer.next({ id: d.id, data: d.data() })
-          }
-        })
+        if (!a.empty) {
+          doc.forEach(d => {
+            if (d.exists) {
+              observer.next({ id: d.id, data: d.data() })
+            }
+          })
+        } else {
+          observer.next({ empty: true });
+        }
       })
     });
   }
 
-  async compageRecordProducts(data, sales) {
-    data.products.forEach(x => {
-      const toUpdate = sales.products.filter(y => y.product == x.product)[0];
-      // let quan  = toUpdate ? toUpdate.quan : 0;
-      if(!toUpdate || (toUpdate.product == x.product && toUpdate.price != x.price)){ // new product to records
-        sales.products.push({
-          product: x.product,
-          price: x.price,
-          quan: x.quan
-        })
-      } else {
-        // if(toUpdate.product == x.product && toUpdate.price != x.price){ // price got updated
-        //   sales.products.push({
-        //     product: x.product,
-        //     price: x.price,
-        //     quan: x.quan
-        //   })
-        // }
-      }
-      
+  pushProduct(prods, val) {
+    prods.push({
+      product: val.product,
+      price: val.price,
+      quan: val.quan
     })
-    return await sales.products;
+  }
+
+  async compareRecordProducts(data, sales) {
+    let $products = [...sales.products];
+    data.products.forEach(x => {
+      const _toUpdate = $products.filter(y => y.product == x.product);
+      if (_toUpdate.length < 1) { // new product
+        this.pushProduct($products, x);
+      } else {
+        _toUpdate.forEach(toUpdate => {
+          // same products with same prices
+          let prodIndex = $products.findIndex(e => e.product == toUpdate.product && e.price == x.price);
+          if (prodIndex >= 0) {
+            $products[prodIndex].quan = ($products[prodIndex].quan + x.quan);
+          } else { // updated price
+            this.pushProduct($products, x);
+          }
+        })
+      }
+    })
+    return await $products;
   }
 
   updateSalesRecord(data) {
-    let date: string = '2019-01-14'
-    // this.getSalesByDate(date).subscribe(d => {
-    //   console.log(d);
-    // })
+    let date: string = data.date;
+    return Observable.create(observer => {
     this.getSalesByDate(date).subscribe(a => {
-      const sales = a.data
-      const id = a.id;
-      this.compageRecordProducts(data, sales).then(record => {
-        this.salesCollection.doc(id).update({
-          date: new Date(),
-          total: (data.total + sales.total),
-          products: record
+      if (!a.empty) {
+        const sales = a.data
+        const id = a.id;
+        this.compareRecordProducts(data, sales).then(record => {
+          this.salesCollection.doc(id).update({
+            date: new Date(),
+            total: (data.total + sales.total),
+            products: record
+          }).then(() => observer.next(true))
         })
+      } else {
+        this.setNewSalesRecord(data).then(() => {
+          observer.next(true);
+        });
+      }
+    })
+    })
+  }
+
+  async setNewSalesRecord(data) {
+    let products: Product[] = [];
+    let total = 0;
+    data.products.forEach(item => {
+      total = total + item.total;
+      products.push({
+        product: item.product,
+        quan: item.quan,
+        price: item. price
       })
     })
-
-
+    this.salesCollection.add({ id: data.date, total: total, date: new Date(), products: products });
   }
-  // firebase.database().ref('users/' + userId).set({
-  //   username: name,
-  //   email: email,
-  //   profile_picture : imageUrl
-  // });
 }
