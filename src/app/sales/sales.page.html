@@ -12,14 +12,15 @@
       <ion-col>
         <ion-item>
           <ion-label>Date</ion-label>
-          <ion-datetime display-format="YYYY/MM/DD" [(ngModel)]="date">
+          <ion-datetime display-format="YYYY/MM/DD" [ngModel]="date" (ngModelChange)="dateChanged($event)">
           </ion-datetime>
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <ngx-datatable
+        <ion-text style="padding:15px" *ngIf="rows.length == 0 && isEmpty">No records found...</ion-text>
+        <ngx-datatable *ngIf="rows.length > 0"
           class='expandable sales'
           [columnMode]="'force'"
           [rows]="rows"
@@ -34,7 +35,7 @@
       </ion-list-header>
       <ion-item >
         <ion-icon name="wallet"></ion-icon>
-        <ion-label class="gross">₱ 132.00</ion-label>
+        <ion-label class="gross">₱ {{total}}</ion-label>
       </ion-item>
     </ion-list>
 </ion-content>

@@ -4,6 +4,12 @@
 
 ngx-datatable.sales {
   padding: 0px 15px;
+
+  .datatable-header {
+    .datatable-header-cell {
+      font-weight: 500;
+    }
+  }
 }
 
 ion-label.gross {
