@@ -13,6 +13,6 @@ export class SalesService {
   }
 
   getSalesRecordByDate(date: string){
-    return this.salesCollection.ref.where('id', '==', date).get()
+    return this.salesCollection.ref.where('id', '==', date).get();
   }
 }

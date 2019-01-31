@@ -7,6 +7,9 @@
 </ion-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-grid>
     <ion-row>
       <ion-col>
@@ -18,24 +21,20 @@
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col>
+      <ion-col *ngIf="rows">
         <ion-text style="padding:15px" *ngIf="rows.length == 0 && isEmpty">No records found...</ion-text>
-        <ngx-datatable *ngIf="rows.length > 0"
-          class='expandable sales'
-          [columnMode]="'force'"
-          [rows]="rows"
-          [columns]="columns">
+        <ngx-datatable *ngIf="rows.length > 0" class='expandable sales' [columnMode]="'force'" [rows]="rows" [columns]="columns">
         </ngx-datatable>
       </ion-col>
     </ion-row>
   </ion-grid>
-    <ion-list lines="none">
-      <ion-list-header>
-        <ion-label>Total Gross Income:</ion-label>
-      </ion-list-header>
-      <ion-item >
-        <ion-icon name="wallet"></ion-icon>
-        <ion-label class="gross">₱ {{total}}</ion-label>
-      </ion-item>
-    </ion-list>
+  <ion-list lines="none">
+    <ion-list-header>
+      <ion-label>Total Gross Income:</ion-label>
+    </ion-list-header>
+    <ion-item>
+      <ion-icon name="wallet"></ion-icon>
+      <ion-label class="gross">₱ {{total}}</ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

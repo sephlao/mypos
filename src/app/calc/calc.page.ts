@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CalcService } from './calc.service';
 import { Observable } from 'rxjs';
 import { Product } from '../common/product';
+import { CommonService } from '../common/common.service';
 
 @Component({
   selector: 'app-calc',
@@ -16,7 +17,7 @@ export class CalcPage implements OnInit {
   total: number = 0;
   productCollection: Observable<Product[]>;
   saving: boolean;
-  constructor(private _calcService: CalcService) {
+  constructor(private _calcService: CalcService, private commonService: CommonService) {
     this.productCollection = this._calcService.getAllProducts()
   }
 
@@ -74,7 +75,8 @@ export class CalcPage implements OnInit {
   }
 
   sold() {
-    this.saving = true;
+    // this.saving = true;
+    this.commonService.showLoader('Saving sales record...');
     const products = [...this.products];
     products.forEach(item => {  
       if (item.quan > 0) {
@@ -89,7 +91,8 @@ export class CalcPage implements OnInit {
     
     this._calcService.updateSalesRecord(data)
     .subscribe(ret => {
-      this.saving = !ret;
+      // this.saving = !ret;
+      this.commonService.dismissLoader();
       this.total = 0;
       this.products.forEach(q => q.quan = null);
     })

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { SalesService } from './sales.service';
-import { LoadingController } from '@ionic/angular';
+import { CommonService } from '../common/common.service';
 import { ViewEncapsulation } from '@angular/core';
 @Component({
   selector: 'app-sales',
@@ -11,7 +11,8 @@ import { ViewEncapsulation } from '@angular/core';
 export class SalesPage implements OnInit {
 
   constructor(private _salesService: SalesService,
-              private loadingController: LoadingController) { }
+    private commonService: CommonService) { 
+    }
 
   rows: any[];
   total: number = 0;
@@ -22,41 +23,34 @@ export class SalesPage implements OnInit {
     { name: 'Total' }
   ];
   date: string;
-  isEmpty: boolean = false;
+  isEmpty: boolean;
 
   ngOnInit() {
     this.date = new Date().toISOString(); // to show current date as default for datepicker
-    this.rows = this.getRowDataByDate(this.formatDatetoID(new Date()));
+    this.rows = this.getRowDataByDate(this.formatDatetoID(this.date));
+  }
+
+  doRefresh(e$) {
+    this.rows = this.getRowDataByDate(this.formatDatetoID(this.date));
+    e$.target.complete();
   }
 
   dateChanged(e$) {
-    let date = this.formatDatetoID(new Date(e$))
-    this.rows = this.getRowDataByDate(date);
-
+    this.date = e$;
+    this.rows = this.getRowDataByDate(this.formatDatetoID(this.date));
   }
 
-  async showLoader() {
-    const loading = await this.loadingController.create({
-      duration: 5000,
-      message: 'Please wait...',
-      translucent: true,
-    });
-    return await loading.present();
-  }
-
-  async dismissLoader() {
-    return await this.loadingController.dismiss();
-  }
-
-  formatDatetoID(date$: Date) {
+  formatDatetoID(date) {
+    let date$ = new Date(date);
     return date$.getFullYear().toString() + '-' + (date$.getMonth() + 1).toString() + '-' + date$.getDate().toString()
   }
 
   getRowDataByDate(date) {
     let rows = []
-    this.showLoader();
+    this.commonService.showLoader('Please wait...');
     this._salesService.getSalesRecordByDate(date).then(records => {
       if (!records.empty) {
+        this.isEmpty = false;
         records.forEach(snap => {
           let record = snap.data();
           this.total = record.total;
@@ -67,11 +61,12 @@ export class SalesPage implements OnInit {
               quantity: prod.quan,
               total: prod.quan * prod.price
             })
-            this.dismissLoader();
+            this.commonService.dismissLoader();
           })
         });
       } else {
         this.isEmpty = true;
+        this.commonService.dismissLoader();
       }
     });
     return rows

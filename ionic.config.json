@@ -1,5 +1,7 @@
 {
   "name": "MyPOS",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
